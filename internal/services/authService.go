@@ -33,26 +33,26 @@ func (auths *authService) Decode(token string) (*models.UserJWT, error) {
 	return &models.UserJWT{}, errors.New("non UserJWT type")
 }
 
-func (auths *authService) encode(timeHours, userID int, role string) (string, error) {
+func (auths *authService) encode(timeHours int, userID string, role string) (string, error) {
 	claims := models.UserJWT{}
 	claims.UserID = userID
 	claims.Role = role
-	duration := time.Duration((int64(time.Hour) * int64(timeHours)))
+	duration := time.Duration(int64(time.Hour) * int64(timeHours))
 	claims.ExpiresAt = time.Now().Add(duration).Unix()
 	token := jwt.NewWithClaims(jwt.GetSigningMethod("HS256"), claims)
 	tokenString, err := token.SignedString(key)
 	// log.Println("Error secret key:", err)
 	return tokenString, err
 }
-func (auths *authService) encodeToAccessToken(userID int, role string) (string, error) {
+func (auths *authService) encodeToAccessToken(userID string, role string) (string, error) {
 	return auths.encode(24, userID, role)
 }
 
-func (auths *authService) encodeToRefreshToken(userID int, role string) (string, error) {
+func (auths *authService) encodeToRefreshToken(userID string, role string) (string, error) {
 	return auths.encode(24*7, userID, role)
 }
 
-func (auths *authService) encodeUser(userID int, role string) (models.Tokens, error) {
+func (auths *authService) encodeUser(userID string, role string) (models.Tokens, error) {
 	tokens := models.Tokens{}
 	accessToken, err := auths.encodeToAccessToken(userID, role)
 	if err != nil {
@@ -78,7 +78,7 @@ func (auths *authService) Login(login, pass string) (models.UserProfile, models.
 		log.Println(err)
 		return models.UserProfile{}, tokens, err
 	}
-	tokens, err = auths.encodeUser(user.ID, user.Role)
+	tokens, err = auths.encodeUser(user.ID.String(), user.Role)
 	if err != nil {
 		log.Println(err)
 		return models.UserProfile{}, tokens, err
@@ -93,7 +93,7 @@ func (auths *authService) Register(user models.UserWithPassword) (models.UserPro
 		log.Println("Error create user in db:", err)
 		return models.UserProfile{}, tokens, err
 	}
-	tokens, err = auths.encodeUser(user.ID, user.Role)
+	tokens, err = auths.encodeUser(user.ID.String(), user.Role)
 	if err != nil {
 		log.Println("Error create token:", err)
 		return models.UserProfile{}, tokens, err

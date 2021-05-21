@@ -31,6 +31,10 @@ func (server *httpServer) StartHTTP() *gin.Engine {
 	api := router.Group("/api")
 	v1 := api.Group("/v1")
 
+	v1.POST("/auth/login", server.v1.Login)
+	v1.POST("/auth/register", server.v1.Register)
+	v1.POST("/auth/refresh", server.v1.Refresh)
+
 	lists := v1.Group("/lists")
 	lists.GET("/", server.v1.Hello)
 

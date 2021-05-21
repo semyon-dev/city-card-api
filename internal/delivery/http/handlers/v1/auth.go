@@ -8,7 +8,7 @@ import (
 )
 
 type reqLogin struct {
-	Login    string `json:"login" bind:"required"`
+	Login    string `json:"email" bind:"required"`
 	Password string `json:"password" bind:"required"`
 }
 type APIRes struct {
