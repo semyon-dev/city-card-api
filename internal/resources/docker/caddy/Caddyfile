@@ -1,0 +1,33 @@
+localhost:9090 {
+    basicauth / dima dima2001
+    proxy / prometheus:9090 {
+            transparent
+        }
+
+    errors stderr
+    tls off
+}
+
+localhost:3000 {
+    proxy / grafana:3000 {
+            transparent
+            websocket
+        }
+
+    errors stderr
+    tls off
+}
+
+localhost:8081 {
+    proxy / goods-scanner-api:8081 {
+            transparent
+            websocket
+        }
+
+    errors stderr
+    tls off
+}
+debug
+metrics /metrics
+
+
