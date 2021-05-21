@@ -12,16 +12,18 @@ import (
 
 func Run() {
 	config.ConnectToMongoDB()
-	mongoDB := config.Mongo.Database("goods-scanner")
+	mongoDB := config.Mongo.Database("city-card")
 	// Repository
-	profileDBRepo := mongo.NewMongoRepository(mongoDB, "lists")
+	profileDBRepo := mongo.NewMongoRepository(mongoDB, "profiles")
+	authDBRepo := mongo.NewMongoRepository(mongoDB, "profiles")
 	// Services
 	// TODO: fix cache repository
 	profileServices := services.NewProfileService(profileDBRepo, profileDBRepo)
-	myServices := services.NewServices(profileServices)
+	authServices := services.NewAuthService(authDBRepo, authDBRepo)
+	// myServices := services.NewServices(profileServices, authServices)
 	// Delivery
 	// HTTP
-	server := http.NewHttpServer(myServices)
+	server := http.NewHttpServer(profileServices, authServices)
 	httpEngine := server.StartHTTP()
 	httpPort := fmt.Sprintf(":%s", os.Getenv("HTTP_PORT"))
 	err := httpEngine.Run(httpPort)

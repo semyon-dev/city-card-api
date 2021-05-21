@@ -9,9 +9,16 @@ type profileService struct {
 	db    repository.Profiler
 	cache repository.Profiler
 }
-type Services struct {
-	profileService *profileService
+
+type authService struct {
+	db    repository.UserRepository
+	cache repository.UserRepository
 }
+
+// type services struct {
+// 	*profileService
+// 	*authService
+// }
 
 func NewProfileService(profileRepoDB repository.Profiler, profileRepoCache repository.Profiler) *profileService {
 	return &profileService{
@@ -20,16 +27,24 @@ func NewProfileService(profileRepoDB repository.Profiler, profileRepoCache repos
 	}
 }
 
-func NewServices(profileService *profileService) *Services {
-	return &Services{
-		profileService: profileService,
-	}
-}
+// func NewServices(profileService *profileService, authService *authService) *services {
+// 	return &services{
+// 		profileService,
+// 		authService,
+// 	}
+// }
 
 type ProfileService interface {
-	GetProfileByID(id, accessToken string) (models.UserProfile, error)
+	GetProfileByID(id string) (models.UserProfile, error)
+}
+
+type AuthService interface {
+	Login(login, pass string) (models.UserProfile, models.Tokens, error)
+	Register(user models.UserWithPassword) (models.UserProfile, models.Tokens, error)
+	Decode(token string) (*models.UserJWT, error)
 }
 
 // type Services interface {
 // 	ProfileService
+// 	AuthService
 // }

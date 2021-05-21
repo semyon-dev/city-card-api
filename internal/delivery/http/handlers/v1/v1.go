@@ -3,11 +3,13 @@ package v1
 import "city-card-api/internal/services"
 
 type HttpV1 struct {
-	services *services.Services
+	profile services.ProfileService
+	auth    services.AuthService
 }
 
-func NewHttpV1(s *services.Services) *HttpV1 {
+func NewHttpV1(profile services.ProfileService, auth services.AuthService) *HttpV1 {
 	return &HttpV1{
-		services: s,
+		profile: profile,
+		auth:    auth,
 	}
 }
