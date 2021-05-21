@@ -13,9 +13,9 @@ type httpServer struct {
 	v1 *v1.HttpV1
 }
 
-func NewHttpServer(services *services.Services) *httpServer {
+func NewHttpServer(profile services.ProfileService, auth services.AuthService) *httpServer {
 	return &httpServer{
-		v1: v1.NewHttpV1(services),
+		v1: v1.NewHttpV1(profile, auth),
 	}
 }
 
