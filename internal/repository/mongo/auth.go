@@ -3,6 +3,7 @@ package mongo
 import (
 	"city-card-api/internal/models"
 	"context"
+
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
@@ -10,17 +11,12 @@ import (
 func (r *mongoRepo) CreateUser(user models.UserWithPassword) (newUser models.UserProfile, err error) {
 	ctx := context.TODO()
 	user.ID = primitive.NewObjectID()
-	res, err := r.collection.InsertOne(ctx, user)
+	_, err = r.collection.InsertOne(ctx, user)
 	if err != nil {
 		return models.UserProfile{}, err
 	}
-	newUser.ID, _ = res.InsertedID.(primitive.ObjectID)
-	newUser.Email = user.Email
-	newUser.Name = user.Name
-	newUser.MName = user.MName
-	newUser.Telephone = user.Telephone
-	newUser.Role = user.Role
-	newUser.Surname = user.Surname
+	newUser = user.UserProfile
+	// newUser.ID, _ = res.InsertedID.(primitive.ObjectID)
 	return newUser, nil
 }
 

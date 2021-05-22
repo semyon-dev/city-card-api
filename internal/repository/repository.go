@@ -18,10 +18,11 @@ type UserRepository interface {
 	DeleteUser(userID int) error
 }
 
-type PayRepository interface {
+type CardRepository interface {
 	CreateCard(userID primitive.ObjectID) (models.Card, error)
 	GetBalance(userID string) (float64, error)
 	AddMoney(userID string, amount float64) (float64, error)
 	RequestPay(userID string) (string, error)
-	SubmitPay(payToken string, amount float64) error
+	GetUserIDByPayToken(payToken string) (string, error)
+	SubmitPay(toUserID, fromUserID string, amount float64) error
 }

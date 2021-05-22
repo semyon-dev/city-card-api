@@ -41,9 +41,60 @@ func (r *mongoRepo) GetBalance(userID string) (float64, error) {
 func (r *mongoRepo) RequestPay(userID string) (string, error) {
 	return "", nil
 }
-
-func (r *mongoRepo) SubmitPay(payToken string, amount float64) error {
+func (r *mongoRepo) withDrawMoney(fromUserID string, amount float64) error {
+	log.Println("fromUser", fromUserID, "amount", amount)
+	// withdraw from user
+	ctx := context.TODO()
+	witdraw := -amount
+	objId, err := primitive.ObjectIDFromHex(fromUserID)
+	if err != nil {
+		return err
+	}
+	filterFind := bson.D{{
+		"$and", []bson.D{
+			bson.D{{"userID", objId}},
+			bson.D{{"balance", bson.D{{"$gte", amount}}}}},
+	}}
+	filterUpdate := bson.D{{
+		"$inc", bson.D{{
+			"balance", witdraw,
+		}}}}
+	_, err = r.collection.UpdateOne(ctx, filterFind, filterUpdate)
+	return err
+}
+func (r *mongoRepo) incrementMoney(toUserID string, amount float64) error {
+	// log.Println("fromUser", fromUserID, "amount", amount)
+	// withdraw from user
+	ctx := context.TODO()
+	// witdraw := -amount
+	objId, err := primitive.ObjectIDFromHex(toUserID)
+	if err != nil {
+		return err
+	}
+	filterFind := bson.D{{"userID", objId}}
+	filterUpdate := bson.D{{
+		"$inc", bson.D{{
+			"balance", amount,
+		}}}}
+	var card models.Card
+	_, err = r.collection.UpdateOne(ctx, filterFind, filterUpdate)
+	log.Println(card)
+	return err
+}
+func (r *mongoRepo) SubmitPay(toUserID, fromUserID string, amount float64) error {
+	err := r.withDrawMoney(fromUserID, amount)
+	if err != nil {
+		return err
+	}
+	err = r.incrementMoney(toUserID, amount)
+	if err != nil {
+		return err
+	}
 	return nil
+}
+
+func (r *mongoRepo) GetUserIDByPayToken(payToken string) (string, error) {
+	return "", nil
 }
 
 func (r *mongoRepo) AddMoney(userID string, amount float64) (float64, error) {

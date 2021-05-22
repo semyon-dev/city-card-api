@@ -85,7 +85,7 @@ func (auths *authService) Register(user models.UserWithPassword) (models.UserPro
 		log.Println("Error create user in db:", err)
 		return models.UserProfile{}, tokens, err
 	}
-	tokens, err = auths.encodeUser(user.ID.Hex(), user.Role)
+	tokens, err = auths.encodeUser(newUser.ID.Hex(), user.Role)
 	if err != nil {
 		log.Println("Error create token:", err)
 		return models.UserProfile{}, tokens, err

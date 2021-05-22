@@ -20,6 +20,7 @@ type UserProfile struct {
 	Email     string             `json:"email" binding:"required"`
 	Telephone string             `json:"telephone" binding:"required"`
 	Role      string             `json:"role" binding:"required"`
+	Type      string             `json:"type" binding:"required"`
 }
 type UserWithPassword struct {
 	UserProfile `bson:",inline"`

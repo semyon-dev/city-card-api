@@ -4,6 +4,7 @@ import (
 	"city-card-api/internal/config"
 	"city-card-api/internal/delivery/http"
 	"city-card-api/internal/repository/mongo"
+	"city-card-api/internal/repository/redis"
 	"city-card-api/internal/services"
 	"fmt"
 	"log"
@@ -12,15 +13,17 @@ import (
 
 func Run() {
 	config.ConnectToMongoDB()
+	config.ConnectToRedis()
 	mongoDB := config.Mongo.Database("city-card")
 	// Repository
 	profileDBRepo := mongo.NewMongoRepository(mongoDB, "profiles")
 	authDBRepo := mongo.NewMongoRepository(mongoDB, "profiles")
 	payDBRepo := mongo.NewMongoRepository(mongoDB, "cards")
+	payCacheRepo := redis.NewRedisRepository(config.Redis)
 	// Services
 	// TODO: fix cache repository
 	profileServices := services.NewProfileService(profileDBRepo, profileDBRepo)
-	payServices := services.NewPayService(payDBRepo, payDBRepo)
+	payServices := services.NewPayService(payDBRepo, payCacheRepo)
 	authServices := services.NewAuthService(authDBRepo, authDBRepo, payDBRepo, payDBRepo)
 
 	// myServices := services.NewServices(profileServices, authServices)

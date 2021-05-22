@@ -26,7 +26,10 @@ func (server *httpServer) StartHTTP() *gin.Engine {
 	gin.SetMode(gin.DebugMode)
 
 	router := gin.Default()
-	router.Use(cors.Default())
+	myCors := cors.DefaultConfig()
+	myCors.AllowAllOrigins = true
+	myCors.AddAllowHeaders("Authorization")
+	router.Use(cors.New(myCors))
 	// prometheus
 	p := ginprometheus.NewPrometheus("gin")
 	p.Use(router)
@@ -43,6 +46,8 @@ func (server *httpServer) StartHTTP() *gin.Engine {
 		pay := v1.Group("/pay")
 		pay.GET("/balance", server.v1.Balance)
 		pay.POST("/money", server.v1.AddMoney)
+		pay.POST("/request", server.v1.RequestPay)
+		pay.POST("/approve", server.v1.ApprovePay)
 
 	}
 	return router
