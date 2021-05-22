@@ -1,4 +1,4 @@
-## Основной стек технологий:
+## Основной стек технологий
 
 * Golang
 * MongoDB
@@ -7,7 +7,7 @@
 
 Демо доступно [по адресу](https://vk.com/)
 
-Реквизиты тестового пользователя: email: testuser@test.ru, пароль: testuser
+Реквизиты тестового пользователя: email: admin@test.ru, пароль: testuser
 
 ## Установка зависимостей проекта
 
@@ -21,9 +21,9 @@ Linux \
 
 # Разработчики
 
-* [Дмитрий Чудинов](https://t.me/dchudik)
-* [Новиков Семен](https://t.me/semyon_dev)
-* [Эльдар Курманалиев](https://t.me/elik_sir)
+* [Дмитрий Чудинов](https://t.me/dchudik) - backend
+* [Новиков Семен](https://t.me/semyon_dev) - backend
+* [Эльдар Курманалиев](https://t.me/elik_sir) - web app
 
 
 
