@@ -11,14 +11,16 @@ type profileService struct {
 }
 
 type authService struct {
-	db    repository.UserRepository
-	cache repository.UserRepository
+	db       repository.UserRepository
+	cache    repository.UserRepository
+	dbPay    repository.PayRepository
+	cachePay repository.PayRepository
 }
 
-// type services struct {
-// 	*profileService
-// 	*authService
-// }
+type payService struct {
+	db    repository.PayRepository
+	cache repository.PayRepository
+}
 
 func NewProfileService(profileRepoDB repository.Profiler, profileRepoCache repository.Profiler) *profileService {
 	return &profileService{
@@ -27,12 +29,21 @@ func NewProfileService(profileRepoDB repository.Profiler, profileRepoCache repos
 	}
 }
 
-// func NewServices(profileService *profileService, authService *authService) *services {
-// 	return &services{
-// 		profileService,
-// 		authService,
-// 	}
-// }
+func NewPayService(db repository.PayRepository, cache repository.PayRepository) *payService {
+	return &payService{
+		db:    db,
+		cache: cache,
+	}
+}
+
+func NewAuthService(db repository.UserRepository, cache repository.UserRepository, dbPay repository.PayRepository, cachePay repository.PayRepository) *authService {
+	return &authService{
+		db:       db,
+		cache:    cache,
+		dbPay:    dbPay,
+		cachePay: cachePay,
+	}
+}
 
 type ProfileService interface {
 	GetProfileByID(id string) (models.UserProfile, error)
@@ -44,7 +55,9 @@ type AuthService interface {
 	Decode(token string) (*models.UserJWT, error)
 }
 
-// type Services interface {
-// 	ProfileService
-// 	AuthService
-// }
+type PayService interface {
+	Balance(userID string) (float64, error)
+	AddMoney(userID string, amount float64) (float64, error)
+	RequestPay(userID string) (string, error)
+	SubmitPay(payToken string, amount int) error
+}

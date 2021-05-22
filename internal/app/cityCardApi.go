@@ -16,14 +16,17 @@ func Run() {
 	// Repository
 	profileDBRepo := mongo.NewMongoRepository(mongoDB, "profiles")
 	authDBRepo := mongo.NewMongoRepository(mongoDB, "profiles")
+	payDBRepo := mongo.NewMongoRepository(mongoDB, "cards")
 	// Services
 	// TODO: fix cache repository
 	profileServices := services.NewProfileService(profileDBRepo, profileDBRepo)
-	authServices := services.NewAuthService(authDBRepo, authDBRepo)
+	payServices := services.NewPayService(payDBRepo, payDBRepo)
+	authServices := services.NewAuthService(authDBRepo, authDBRepo, payDBRepo, payDBRepo)
+
 	// myServices := services.NewServices(profileServices, authServices)
 	// Delivery
 	// HTTP
-	server := http.NewHttpServer(profileServices, authServices)
+	server := http.NewHttpServer(profileServices, authServices, payServices)
 	httpEngine := server.StartHTTP()
 	httpPort := fmt.Sprintf(":%s", os.Getenv("HTTP_PORT"))
 	err := httpEngine.Run(httpPort)

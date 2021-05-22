@@ -2,6 +2,8 @@ package repository
 
 import (
 	"city-card-api/internal/models"
+
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 type Profiler interface {
@@ -14,4 +16,12 @@ type UserRepository interface {
 	ChangePassword(userID int, currentPass, newPass string) error
 	UpdateProfile(name, surname, mname string) error
 	DeleteUser(userID int) error
+}
+
+type PayRepository interface {
+	CreateCard(userID primitive.ObjectID) (models.Card, error)
+	GetBalance(userID string) (float64, error)
+	AddMoney(userID string, amount float64) (float64, error)
+	RequestPay(userID string) (string, error)
+	SubmitPay(payToken string, amount float64) error
 }

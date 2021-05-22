@@ -2,7 +2,6 @@ package services
 
 import (
 	"city-card-api/internal/models"
-	"city-card-api/internal/repository"
 	"errors"
 	"log"
 	"time"
@@ -11,13 +10,6 @@ import (
 )
 
 var key = []byte("my-32-character-ultra-secure-and-ultra-long-secret")
-
-func NewAuthService(db repository.UserRepository, cache repository.UserRepository) *authService {
-	return &authService{
-		db:    db,
-		cache: cache,
-	}
-}
 
 func (auths *authService) Decode(token string) (*models.UserJWT, error) {
 	myToken, err := jwt.ParseWithClaims(token, &models.UserJWT{}, func(token *jwt.Token) (interface{}, error) {
@@ -78,7 +70,7 @@ func (auths *authService) Login(login, pass string) (models.UserProfile, models.
 		log.Println(err)
 		return models.UserProfile{}, tokens, err
 	}
-	tokens, err = auths.encodeUser(user.ID.String(), user.Role)
+	tokens, err = auths.encodeUser(user.ID.Hex(), user.Role)
 	if err != nil {
 		log.Println(err)
 		return models.UserProfile{}, tokens, err
@@ -93,7 +85,12 @@ func (auths *authService) Register(user models.UserWithPassword) (models.UserPro
 		log.Println("Error create user in db:", err)
 		return models.UserProfile{}, tokens, err
 	}
-	tokens, err = auths.encodeUser(user.ID.String(), user.Role)
+	tokens, err = auths.encodeUser(user.ID.Hex(), user.Role)
+	if err != nil {
+		log.Println("Error create token:", err)
+		return models.UserProfile{}, tokens, err
+	}
+	_, err = auths.dbPay.CreateCard(newUser.ID)
 	if err != nil {
 		log.Println("Error create token:", err)
 		return models.UserProfile{}, tokens, err

@@ -3,6 +3,7 @@ package v1
 import (
 	"city-card-api/internal/models"
 	"log"
+	"net/http"
 
 	"github.com/gin-gonic/gin"
 )
@@ -32,7 +33,17 @@ func (s *HttpV1) Login(c *gin.Context) {
 	if err != nil {
 		c.JSON(404, gin.H{
 			"error":   true,
-			"message": "user not auth",
+			"message": "user_not_auth",
+			// "messageR": "Логин и пароль не верны",
+		})
+		return
+	}
+	balance, err := s.pay.Balance(user.ID.Hex())
+	if err != nil {
+		log.Println(err)
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error":   true,
+			"message": "error_get_balance",
 			// "messageR": "Логин и пароль не верны",
 		})
 		return
@@ -42,6 +53,7 @@ func (s *HttpV1) Login(c *gin.Context) {
 		"message": "ok",
 		"tokens":  tokens,
 		"user":    user,
+		"balance": balance,
 	})
 }
 
@@ -77,6 +89,7 @@ func (s *HttpV1) Register(c *gin.Context) {
 		"message": "ok",
 		"tokens":  tokens,
 		"user":    newUser,
+		"balance": float32(0),
 	})
 }
 

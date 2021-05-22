@@ -2,6 +2,7 @@ package http
 
 import (
 	v1 "city-card-api/internal/delivery/http/handlers/v1"
+	"city-card-api/internal/delivery/http/middlewares"
 	"city-card-api/internal/services"
 
 	"github.com/gin-contrib/cors"
@@ -10,12 +11,14 @@ import (
 )
 
 type httpServer struct {
-	v1 *v1.HttpV1
+	v1          *v1.HttpV1
+	middlewares *middlewares.Middlewares
 }
 
-func NewHttpServer(profile services.ProfileService, auth services.AuthService) *httpServer {
+func NewHttpServer(profile services.ProfileService, auth services.AuthService, pay services.PayService) *httpServer {
 	return &httpServer{
-		v1: v1.NewHttpV1(profile, auth),
+		v1:          v1.NewHttpV1(profile, auth, pay),
+		middlewares: middlewares.NewHttpMiddleware(auth),
 	}
 }
 
@@ -35,8 +38,12 @@ func (server *httpServer) StartHTTP() *gin.Engine {
 	v1.POST("/auth/register", server.v1.Register)
 	v1.POST("/auth/refresh", server.v1.Refresh)
 
-	lists := v1.Group("/lists")
-	lists.GET("/", server.v1.Hello)
+	v1.Use(server.middlewares.Auth())
+	{
+		pay := v1.Group("/pay")
+		pay.GET("/balance", server.v1.Balance)
+		pay.POST("/money", server.v1.AddMoney)
 
+	}
 	return router
 }
