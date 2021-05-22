@@ -15,7 +15,9 @@
 
 ## Демо
 
-Демо доступно [по адресу](https://vk.com/)
+* [Демо веб приложения](http://citi-card.dchudinov.ru)
+
+* Демо БЭКЕНДА доступно [по адресу](http://citi-card.dchudinov.ru:8081/api/v1)
 
 Реквизиты тестового пользователя: email: admin@test.ru, пароль: testuser
 
