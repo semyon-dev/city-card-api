@@ -28,7 +28,7 @@ func (server *httpServer) StartHTTP() *gin.Engine {
 	router := gin.Default()
 	myCors := cors.DefaultConfig()
 	myCors.AllowAllOrigins = true
-	myCors.AddAllowHeaders("Authorization")
+	myCors.AddAllowHeaders("Authorization", "Host", "Origin")
 	router.Use(cors.New(myCors))
 	// prometheus
 	p := ginprometheus.NewPrometheus("gin")

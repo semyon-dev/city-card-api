@@ -21,7 +21,8 @@ var Redis *redis.Client
 func connectToRedis() {
 	url := os.Getenv("REDIS_URI")
 	if url == "" {
-		log.Fatal("No set REDIS_URI")
+		log.Println("No set REDIS_URI")
+		return
 	}
 	opt, err := redis.ParseURL(url)
 	if err != nil {
